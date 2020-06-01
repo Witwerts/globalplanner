@@ -1,25 +1,24 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Global Planner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-
-  <script type="text/javascript" src="src/scripts/jquery.min.js"></script>
-  <script type="text/javascript" src="src/scripts/bootstrap.min.js"></script>
-  <script type="text/javascript" src="src/scripts/angular.min.js"></script>
-  <script type="text/javascript" src="src/scripts/main.js"></script>
+  <head>
+    <meta charset="utf-8">
+    <title>Global Planner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
   
-  <link rel="stylesheet" href="src/styles/bootstrap.min.css"/>
-  <link rel="stylesheet" href="src/styles/main.css"/>
-</head>
-<body>
-  <app-root>
-  </app-root>
+    <script type="text/javascript" src="src/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="src/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="src/scripts/angular.min.js"></script>
+    <script type="text/javascript" src="src/scripts/angular-ui-router.min.js"></script>
+    
+    <script type="text/javascript" src="src/scripts/main.js"></script>
+    <script type="text/javascript" src="src/scripts/controllers.js"></script>
+    
+    <link rel="stylesheet" href="src/styles/bootstrap.min.css"/>
+    <link rel="stylesheet" href="src/styles/main.css"/>
+  </head>
 
-  <div ng-app="">
-    <p>My first expression: {{ 5 + 5 }}</p>
-  </div>
-</body>
+  <body  ng-app="gpApp">
+    <ui-view></ui-view>
+  </body>
 </html>

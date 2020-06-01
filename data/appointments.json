@@ -1,0 +1,18 @@
+﻿[
+  {
+    "id": 1,
+    "title": "Tandarts",
+    "user": "Albert Witwerts",
+    "description": "Afspraak tandarts",
+    "start": 0,
+    "end": 360
+  },
+  {
+    "id": 2,
+    "title": "Kapper",
+    "user": "Gerwin Terpstra",
+    "description": "Afspraak kapper",
+    "start": 540,
+    "end": 900
+  }
+]
