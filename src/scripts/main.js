@@ -24,14 +24,14 @@ gpApp.config(['$stateProvider', function($stateProvider, $urlRouterProvider){
                 url: '/settings',
                 views: {
                     'header@settings': {
-                        templateUrl: 'template/footer.html'
+                        templateUrl: 'template/header.html'
                     },
                     '@': {
-                        templateUrl: 'template/pages/agenda.html',
+                        templateUrl: 'template/pages/settings.html',
                         controller: 'agendaController'
                     },
                     'footer@settings': {
-                        templateUrl: 'template/header.html'
+                        templateUrl: 'template/footer.html'
                     }
                 }
             })

@@ -1,12 +1,27 @@
-﻿<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Global Planner</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-            <a ui-sref="root" class="nav-item nav-link">Agenda</a>
-            <a ui-sref="settings" class="nav-item nav-link">Instellingen</a>
+﻿<div class="header">
+    <div class="navbar">
+        <div class="logo navbar-brand">
+            <img src="src/images/logo.png"/>
         </div>
+
+        <nav>
+            <ul>
+                <li>
+                    <a ui-sref="root">
+                        <img class="icon" src="src/images/icons/planner.svg"/>
+
+                        <p>Agenda</p>
+                    </a>
+                </li>
+
+                <li>
+                    <a ui-sref="settings">
+                        <img class="icon" src="src/images/icons/login.svg"/>
+
+                        <p>Inloggen</p>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
-</nav>
+</div>
