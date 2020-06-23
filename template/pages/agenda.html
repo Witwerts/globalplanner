@@ -1,21 +1,21 @@
 ﻿<div ui-view="header"></div>
 
 <div class="content d-flex">
-    <div class="planner col-xl-7 col-lg-8 col-md-10 col-sm-11">
+    <div class="planner col-xl-7 col-lg-10 col-md-11 col-sm-12">
         <div class="form-row planner-header">
             <div class="col-4 header-left d-flex">
                 <div class="btn-group show-types" role="group" data-toggle="buttons">
-                    <label class="btn"><input type='radio' name="planner-show" id="day" checked>Dag</label>
-                    <label class="btn"><input type='radio' name="planner-show" id="week">Week</label>
-                    <label class="btn"><input type='radio' name="planner-show" id="month">Maand</label>
+                    <label class="btn" ng-repeat="type in showTypes" ng-click="settings.showType = type" ng-class="{ active: settings.showType == type }" >
+                        <input type="radio" name="planner-show" ng-checked="settings.showType == type"> {{ type.title }}
+                    </label>
                 </div>
             </div>
 
             <div class="col header-center">
                 <div class="btn-group currData">
-                    <button class="btn round prev">&lt;</button>
-                    <span class="curr">Week 24 - Juni 2020</span>
-                    <button class="btn round next">&gt;</button>
+                    <button class="btn prev" ng-click="settings.currTime = getNextDate(settings.currTime, settings.showType.addSeconds(settings.currTime, -1))">&lt;</button>
+                    <span class="curr">{{ settings.currTime | date: settings.showType.dateFormat }}</span>
+                    <button class="btn next" ng-click="settings.currTime = getNextDate(settings.currTime, settings.showType.addSeconds(settings.currTime, 1))">&gt;</button>
                 </div>
             </div>
 
@@ -27,14 +27,34 @@
             </div>
         </div>
 
-        <div class="planner-content">
-            <table>
-                <thead>
-                </thead>
+        <div class="planner-content" ng-switch="settings.showType.key">
+            <div ng-switch-when="day" class="agenda day">
+                <h2>{{ settings.showType.title }}:</h2>
+            </div>
 
-                <tbody>
-                </tbody>
-            </table>
+            <div ng-switch-when="week" class="agenda week">
+                <h2>{{ settings.showType.title }}:</h2>
+            </div>
+
+            <div ng-switch-when="month" class="agenda month">
+                <table>
+                    <thead class="agenda-header">
+                        <th ng-repeat="n in range(settings.startDay,settings.startDay+6)">
+                            <span class="day-short d-block d-md-none">{{ getShortDay(n) }}</span>
+                            <span class="day-long d-none d-md-block">{{ getWeekDay(n) }}</span>
+                        </th>
+                    </thead>
+                    
+                    <tbody class="agenda-content">
+                        <tr ng-repeat="w in range(0,5)">
+                            <td ng-repeat="dayTime in getWeek(getFirstDay(settings.currTime, true)+(w*7*24*60*60*1000), settings.startDay)" ng-init="firstDay = getFirstDay(settings.currTime); isDisabled = (dayTime < getPrevMonth(settings.currTime, false) || dayTime >= getNextMonth(settings.currTime, false));" ng-class="{ disabled: (isDisabled && !inCurrWeek(dayTime)), active: (inCurrWeek(dayTime)) }">
+                                <span class="badge badge-primary totalmsgs" ng-init='rand = getRand(0, 9)' ng-show="rand > 0 && !isDisabled && inCurrWeek(dayTime)">{{ rand }}</span>
+                                <span class="day" ng-class="{ current: (settings.currTime == dayTime), today: (getToday(false) == dayTime) }" ng-click="settings.currTime = dayTime">{{ dayTime | date: 'd' }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
