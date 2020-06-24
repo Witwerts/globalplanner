@@ -9,3 +9,6 @@ self.addEventListener('activate', (evt) => {
 });
 
 // fetch event
+self.addEventListener('fetch', (evt) => {
+    console.log('Fetch event: ', evt);
+});
