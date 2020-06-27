@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set("Europe/Amsterdam");
+
 //Require composer files
 require 'vendor/autoload.php';
 

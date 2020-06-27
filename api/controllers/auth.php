@@ -38,6 +38,18 @@ class Auth extends Controller{
     function user($id = null){
         if($_SERVER['REQUEST_METHOD'] === 'GET'){
             $this->model->displayUser($id);
+        }else if($_SERVER['REQUEST_METHOD'] === 'PUT'){
+            $this->model->updateUser($id);
+        }
+        $this->view->httpResponseCode = $this->model->getResponse();
+        $this->view->output = $this->model->getOutput();
+        
+        $this->view->render("index/index",false);
+    }
+
+    function users($type = null){
+        if($_SERVER['REQUEST_METHOD'] === 'GET'){
+            $this->model->displayUsers($type);
         }
         $this->view->httpResponseCode = $this->model->getResponse();
         $this->view->output = $this->model->getOutput();

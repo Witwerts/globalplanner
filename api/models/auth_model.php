@@ -18,6 +18,23 @@ class Auth_Model extends Endpoint{
         parent::__construct();
     }
 
+    function getUsers($type = null){
+        if($type == null){
+            $query = $this->db->select("SELECT user_id,email,type FROM user");
+        }else{
+            $query = $this->db->select("SELECT user_id,email,type FROM user WHERE type=:type",array(
+                "type" => $type
+            ));
+        }
+        if(count($query) > 0){
+            foreach($query as $key => $value){
+                $query[$key]['workhours'] = $this->getUserWorkhours($value['user_id']);
+            }
+            return $query;
+        }
+        return array();
+    }
+
     function getUserById($user_id = null){
         if($user_id != null){
             $query = $this->db->select("SELECT user_id,email,type FROM user WHERE user_id=:uid",array(
@@ -59,6 +76,17 @@ class Auth_Model extends Endpoint{
         }
     }
 
+    function usersData($type = null){
+        $users = $this->getUsers($type);
+        $this->output['message'] = "Displaying all " . count($users) . " users";
+        if($type != null){
+            $this->output['message'] .= " with type $type";
+        }
+        $this->output['success'] = true;
+        $this->responseCode = "200 OK";
+        $this->output['data'] = $users;
+    }
+
     function userData($id = null){
         if($id == null){
             $this->output['message'] = "Displaying user info for given auth token";
@@ -86,14 +114,33 @@ class Auth_Model extends Endpoint{
         $this->output['message'] = "User not found";
         if($this->jwtData != null){
             if($id != null){
-                if($this->_checkIfUserIsRole("EMPLOYEE") && $this->getSettingValue("employee_view_all_user")){
+                if(($this->_checkIfUserIsRole("EMPLOYEE") && $this->getSettingValue("employee_view_all_user")) ||
+                    ($this->_checkIfUserIsRole("MODERATOR"))){
                     $this->userData($id);
-                }else if($this_checkIfUserIsRole("MODERATOR")){
-                    $this->userData($id);
+                }else{
+                    $this->output['message'] = "Not allowed to view this";
+                    $this->responseCode = "401 Unauthorized";
                 }
             }else{
                 $this->userData();
             }
+        }else{
+            $this->output['message'] = "No JWT supplied";
+        }
+    }
+
+    function displayUsers($type = null){
+        $this->output['message'] = "No users found";
+        if($this->jwtData != null){
+            if(($this->_checkIfUserIsRole("EMPLOYEE") && $this->getSettingValue("employee_view_all_user")) ||
+                ($this->_checkIfUserIsRole("MODERATOR"))){
+                $this->usersData($type);
+            }else{
+                $this->output['message'] = "Not allowed to view this";
+                $this->responseCode = "401 Unauthorized";
+            }
+        }else{
+            $this->output['message'] = "No JWT supplied";
         }
     }
 
@@ -130,7 +177,7 @@ class Auth_Model extends Endpoint{
                         )
                     );
                     $this->output['data']['jwt'] = JWT::encode($info,JWT_SECRET_TOKEN);
-                    $this->output['data']['expires_at'] = time() + JWT_USABLE_TIME_SECONDS;
+                    $this->output['data']['expires_at'] = date("Y-m-d H:i:s", (time() + JWT_USABLE_TIME_SECONDS));
                 }
             }
 

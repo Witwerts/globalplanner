@@ -1,7 +1,8 @@
 <?php
 
 /**
- * 
+ * Database wrapper
+ * @author Mobieljoy
  */
 class Database extends PDO
 {
