@@ -1,4 +1,6 @@
-const staticCacheName = 'site-static';
+const staticCacheName = 'site-static-v1';
+
+const dynamicCacheName = 'site-dynamic-v1';
 
 const assets = [
     '/',
@@ -15,6 +17,7 @@ const assets = [
     'src/styles/main.css',
     'template/pages/agenda.html',
     'template/pages/settings.html',
+    'template/pages/fallback.html',
     'src/images/icons/planner.svg',
     'src/images/icons/login.svg',
 ];
@@ -28,11 +31,34 @@ self.addEventListener('install', (evt) => {
 // activate event
 self.addEventListener('activate', (evt) => {
     //console.log('Service worker has been activated.');
+    evt.waitUntil(
+        caches.keys().then(keys => {
+            // console.log(keys);
+            return Promise.all(keys
+                .filter(key => key !== staticCacheName && key !== dynamicCacheName)
+                .map(key => caches.delete(key))    
+            )
+        })
+    );
 });
 
 // fetch event
 self.addEventListener('fetch', (evt) => {
     //console.log('Fetch event: ', evt);
+    evt.respondWith(
+        caches.match(evt.request).then(cacheRes => {
+            return cacheRes || fetch(evt.request).then(fetchRes => {
+                return caches.open(dynamicCacheName).then(cache => {
+                    cache.put(evt.request.url, fetchRes.clone());
+                    return fetchRes;
+                })
+            });
+        }).catch(() => {
+            if(evt.request.url.indexOf('.html') > -1) {
+                return caches.match('template/pages/fallback.html');
+            }
+        })
+    );
 });
 
 function precache() {
