@@ -20,6 +20,15 @@ class Endpoint extends Model{
 
     protected $data = null;
 
+    protected function _checkIfUserIsRole($roleName){
+        if($this->jwtData != null){
+            if(strcmp(strtoupper($this->jwtData->data->type),strtoupper($roleName)) == 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
 	function __construct(){
         parent::__construct();
         $this->data = json_decode(file_get_contents("php://input"),true);

@@ -4,15 +4,6 @@
 use \Firebase\JWT\JWT;
 
 class Auth_Model extends Endpoint{
-    
-    private function _checkIfUserIsRole($roleName){
-        if($this->jwtData != null){
-            if(strcmp(strtoupper($this->jwtData->data->type),strtoupper($roleName)) == 0){
-                return true;
-            }
-        }
-        return false;
-    }
 
     function __construct(){
         parent::__construct();
@@ -177,7 +168,7 @@ class Auth_Model extends Endpoint{
                         )
                     );
                     $this->output['data']['jwt'] = JWT::encode($info,JWT_SECRET_TOKEN);
-                    $this->output['data']['expires_at'] = date("Y-m-d H:i:s", (time() + JWT_USABLE_TIME_SECONDS));
+                    $this->output['data']['expires_at'] = $this->formatEndpointTime(time() + JWT_USABLE_TIME_SECONDS);
                 }
             }
 

@@ -16,6 +16,9 @@ define('URL', 'http://localhost/');
 // Define libs folder
 define('LIBS', 'libs/');
 
+//Time values
+define('ENDPOINT_TIME_FORMAT', "Y-m-d H:i:s");
+
 // JWT
 define('JWT_ISSUER', 'Projectgroep 13'); //issuer
 define('JWT_NOT_USABLE_FOR_SECONDS', 5); //How long before a token starts working

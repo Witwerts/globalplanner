@@ -19,6 +19,10 @@ class Model{
 		$this->db = new Database();
 	}
 
+	function formatEndpointTime($time){
+		return date(ENDPOINT_TIME_FORMAT,$time);
+	}
+
 	function getSettingValue($settingName){
 		$query = $this->db->select("SELECT * FROM setting WHERE name=:name",
 			array(
