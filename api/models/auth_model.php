@@ -229,5 +229,37 @@ class Auth_Model extends Endpoint{
             $this->responseCode = "400 Bad Request";
         }
     }
+
+    function insertWorkHour($user_id = null, $day_index = null, $array_hours = null){
+        if($user_id != null && $day_index != null && is_array($array_hours)){
+            //TODO
+        }
+    }
+
+    //Updateable fields: workhours
+    //Format: array('workhours' : array('Maandag' : array('start_time' : '09:00:00', 'end_time' : '17:00:00'), etc..));
+    function updateUser(){
+        $this->output['message'] = 'Unauthorized to update users workhours';
+        $this->responseCode = "401 Unauthorized";
+        if($this->jwtData != null){
+            $this->output["message"] = "Please use the following format: array('workhours' : array('Maandag' : array('start_time' : '09:00:00', 'end_time' : '17:00:00'), etc..));";
+            $this->responseCode = "400 Bad Request";
+            if(isset($this->data['workhours'])){
+                $workhours = $this->data['workhours'];
+                $succesCounter = 0;
+                if(is_array($workhours)){
+                    foreach($workhours as $key => $value){
+                        $day_index = array_search($value[0]);
+                        if($day_index != false){
+                            $this->insertWorkHour($this->jwtData->data->id,$day_index,$value[1]);
+                            $succesCounter++;
+                        }
+                    }
+                    $this->output['message'] = "Updated " . $succesCounter . " record(s)";
+                    $this->responseCode = "201 Created";
+                }
+            }
+        }
+    }
     
 }

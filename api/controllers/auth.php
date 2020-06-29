@@ -15,7 +15,15 @@ class Auth extends Controller{
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             //REGISTER
             $this->model->attemptRegister();
-        }else if($_SERVER['REQUEST_METHOD'] === 'GET'){
+        }
+        $this->view->httpResponseCode = $this->model->getResponse();
+        $this->view->output = $this->model->getOutput();
+        
+        $this->view->render("index/index",false);
+    }
+
+    function login(){
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
             //LOGIN
             $this->model->attemptLogin();
         }

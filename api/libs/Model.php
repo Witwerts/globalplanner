@@ -20,7 +20,8 @@ class Model{
 	}
 
 	function formatEndpointTime($time){
-		return date(ENDPOINT_TIME_FORMAT,$time);
+		return $time;
+		//return date(ENDPOINT_TIME_FORMAT,$time);
 	}
 
 	function getSettingValue($settingName){
