@@ -20,6 +20,8 @@ const assets = [
     'template/pages/fallback.html',
     'src/images/icons/planner.svg',
     'src/images/icons/login.svg',
+    'template/footer.html',
+    'template/header.html'
 ];
 
 // install service worker
