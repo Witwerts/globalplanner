@@ -2,6 +2,8 @@
 
 date_default_timezone_set("Europe/Amsterdam");
 
+ini_set("allow_url_fopen", true);
+
 //Require composer files
 require 'vendor/autoload.php';
 

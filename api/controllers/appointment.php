@@ -9,11 +9,13 @@ class Appointment extends Controller{
 		parent::__construct();
 	}
 
-	function index($include_others = false, $id = null){
+	function index($id = null){
         if($_SERVER['REQUEST_METHOD'] === 'GET'){
-            $this->model->getAppointment($include_others,$id);
+            $this->model->getAppointment($id);
         }else if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $this->model->addAppointment();
+        }else if($_SERVER['REQUEST_METHOD'] === 'PUT'){
+            $this->model->updateAppointment($id);
         }
         $this->view->httpResponseCode = $this->model->getResponse();
         $this->view->output = $this->model->getOutput();

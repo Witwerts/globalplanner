@@ -143,14 +143,14 @@ class Auth_Model extends Endpoint{
 
             $this->responseCode = "200 OK";
 
-            $query = $this->db->select("SELECT * FROM user WHERE email=:mail",
+            $userQuery = $this->db->select("SELECT * FROM user WHERE email=:mail",
                 array(
                     "mail" => $this->data['email']
                 )
             );
 
-            if(count($query) == 1){
-                $user = $query[0];
+            if(count($userQuery) == 1){
+                $user = $userQuery[0];
                 $this->output['message'] = "Invalid password";
                 if(password_verify($this->data['password'],$user['password']) == true){
                     $this->output['message'] = "Login successful!";
@@ -178,6 +178,14 @@ class Auth_Model extends Endpoint{
     }
 
     function doRegister($email,$password,$type){
+        $checkExisting = $this->db->select("SELECT user_id FROM user WHERE email=:mail",array(
+            "mail" => $email
+        ));
+        if(count($checkExisting) > 0){
+            $this->output['message'] = "User with email $email already exists";
+            $this->responseCode = "409 Conflict";
+            return;
+        }
         $query = $this->db->insert("user",
             array(
                 "email" => $email,
@@ -231,17 +239,45 @@ class Auth_Model extends Endpoint{
     }
 
     function insertWorkHour($user_id = null, $day_index = null, $array_hours = null){
-        if($user_id != null && $day_index != null && is_array($array_hours)){
-            //TODO
+        if(is_array($array_hours)){
+            $existQuery = $this->db->select("SELECT * FROM workhour WHERE user_id=:uid AND day_index= :dind",array(
+                "uid" => $user_id,
+                "dind" => $day_index
+            ));
+            if(count($existQuery) == 1){
+                $updateQuery = $this->db->update("workhour",array(
+                    "user_id" => $user_id,
+                    "day_index" => $day_index,
+                    "start_time" => $array_hours['start_time'],
+                    "end_time" => $array_hours['end_time']
+                ),"user_id = :user_id AND day_index = :day_index");
+            }else{
+                $insertQuery = $this->db->insert("workhour",array(
+                    "user_id" => $user_id,
+                    "day_index" => $day_index,
+                    "start_time" => $array_hours['start_time'],
+                    "end_time" => $array_hours['end_time']
+                ));
+            }
+            return true;
         }
+        return false;
     }
 
     //Updateable fields: workhours
     //Format: array('workhours' : array('Maandag' : array('start_time' : '09:00:00', 'end_time' : '17:00:00'), etc..));
-    function updateUser(){
+    function updateUser($id = null){
+        if($id == null){
+            $this->output['message'] = 'No user_id specified in url';
+            $this->responseCode = "400 Bad Request";
+            return;
+        }
         $this->output['message'] = 'Unauthorized to update users workhours';
         $this->responseCode = "401 Unauthorized";
         if($this->jwtData != null){
+            if(!$this->_checkIfUserIsRole("MODERATOR")){
+                return;
+            }
             $this->output["message"] = "Please use the following format: array('workhours' : array('Maandag' : array('start_time' : '09:00:00', 'end_time' : '17:00:00'), etc..));";
             $this->responseCode = "400 Bad Request";
             if(isset($this->data['workhours'])){
@@ -249,14 +285,21 @@ class Auth_Model extends Endpoint{
                 $succesCounter = 0;
                 if(is_array($workhours)){
                     foreach($workhours as $key => $value){
-                        $day_index = array_search($value[0]);
-                        if($day_index != false){
-                            $this->insertWorkHour($this->jwtData->data->id,$day_index,$value[1]);
-                            $succesCounter++;
+                        $day_index = array_search($key,$this->dayIndex);
+                        if($day_index !== false){
+                            if($this->insertWorkHour($id,$day_index,$value)){
+                                $succesCounter++;
+                            }
                         }
                     }
-                    $this->output['message'] = "Updated " . $succesCounter . " record(s)";
-                    $this->responseCode = "201 Created";
+                    if($succesCounter > 0){
+                        $this->output['message'] = "Updated " . $succesCounter . " record(s)";
+                        $this->output['success'] = true;
+                        $this->responseCode = "201 Created";
+                    }else{
+                        $this->output['message'] = "No updateable data supplied";
+                        $this->responseCode = "400 Bad Request";
+                    }
                 }
             }
         }
