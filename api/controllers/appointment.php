@@ -26,6 +26,8 @@ class Appointment extends Controller{
     function type($id = null){
         if($_SERVER['REQUEST_METHOD'] === 'GET'){
             $this->model->getAppointmentType($id);
+        }else if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $this->model->addAppointmentType();
         }
         $this->view->httpResponseCode = $this->model->getResponse();
         $this->view->output = $this->model->getOutput();

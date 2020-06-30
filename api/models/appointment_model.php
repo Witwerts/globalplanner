@@ -145,6 +145,29 @@ class Appointment_Model extends Endpoint{
         return false;
     }
 
+    function addAppointmentType(){
+        $this->output['message'] = "Not authorized to add appointment types";
+        $this->responseCode = "401 Unauthorized";
+        if($this->jwtData != null){
+            if($this->_checkIfUserIsRole("MODERATOR")){
+                $type = $this->data;
+                $this->output['message'] = "Please provide name,description,duration_min";
+                $this->responseCode = "400 Bad Request";
+                if(isset($type['name'],$type['description'],$type['duration_min'])){
+                    $query = $this->db->insert("appointment_type",array(
+                        "name" => $type['name'],
+                        "description" => $type['description'],
+                        "duration_min" => $type['duration_min']
+                    ));
+                    $this->output['message'] = $type['name'] . " added as a type";
+                    $this->output['success'] = true;
+                    $this->output['data'] = $type;
+                    $this->responseCode = "201 Created";
+                }
+            }
+        }
+    }
+
     function getAppointmentType($id = null){
         $this->output['message'] = "Not authorized to view appointment types";
         $this->responseCode = "401 Unauthorized";
