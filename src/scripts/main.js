@@ -1,15 +1,21 @@
 ﻿var gpApp = angular.module("gpApp", [
     'ui.router',
+    'ngStorage',
     'controllers'
 ]);
 
-gpApp.config(['$stateProvider', function($stateProvider, $urlRouterProvider){
+var controllers = angular.module('controllers', []);
+
+gpApp.config(['$stateProvider', "$urlRouterProvider", "$httpProvider", function($stateProvider, $urlRouterProvider){
+    $urlRouterProvider.otherwise('/notfound');
+    
     $stateProvider
         .state('root', {
-            url: '',
+            url: '/',
             views: {
                 'header@root': {
-                    templateUrl: 'template/header.html'
+                    templateUrl: 'template/header.html',
+                    controller: 'loginController'
                 },
                 '@': {
                     templateUrl: 'template/pages/agenda.html',
@@ -28,11 +34,45 @@ gpApp.config(['$stateProvider', function($stateProvider, $urlRouterProvider){
                     },
                     '@': {
                         templateUrl: 'template/pages/settings.html',
-                        controller: 'agendaController'
+                        controller: 'settingController'
                     },
                     'footer@settings': {
                         templateUrl: 'template/footer.html'
                     }
                 }
             })
+        .state('login', {
+            url: '/login',
+            views: {
+                'header@login': {
+                    templateUrl: 'template/header.html'
+                },
+                '@': {
+                    templateUrl: 'template/pages/login.html',
+                    controller: 'loginController'
+                },
+                'footer@login': {
+                    templateUrl: 'template/footer.html'
+                }
+            }
+        })
+        .state('register', {
+            url: '/register',
+            views: {
+                'header@register': {
+                    templateUrl: 'template/header.html'
+                },
+                '@': {
+                    templateUrl: 'template/pages/register.html',
+                    controller: 'loginController'
+                },
+                'footer@register': {
+                    templateUrl: 'template/footer.html'
+                }
+            }
+        })
+        .state('notfound', {
+            url: '/notfound', 
+            templateUrl: 'template/pages/fallback.html'
+        })
 }])

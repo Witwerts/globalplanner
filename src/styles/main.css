@@ -7,6 +7,18 @@
 
 :root {
     --mainColor1: #FF8C00;
+    --mainColor2: #ffba66;
+    --sidebarWidth: 7em;
+    --sidebarHeight: 100%;
+    --headerHeight: 2em;
+    --plannerRowHeight: 4em;
+    --plannerRowPadding: 1em;
+    --appPaddingX: 0.4em;
+    --appPaddingY: 0.3em;
+    --scrollbarHeight: auto;
+    --scrollbarWidth: 16px;
+    --scrollbarPaddingX: 2em;
+    --scrollbarPaddingY: 5em;
 }
 
 html, body {
@@ -73,12 +85,9 @@ li {
     color: white;
 }
 
-.header .navbar nav ul {
-    padding: 0;
-}
-
 .header .navbar nav li {
     display: inline-block;
+    position: relative;
 }
 
 .header .navbar nav li a {
@@ -91,9 +100,10 @@ li {
     border-radius: 6px;
 }
 
-.header .navbar nav li a:hover {
+.header .navbar nav li a:hover, .header .navbar nav li.show a {
     background: rgba(255,255,255,0.2);
     border-color: rgba(0,0,0,0.1);
+    cursor: pointer;
 }
 
 .header .navbar nav li a:active {
@@ -110,11 +120,63 @@ li {
     max-width: 1170px;
 }
 
+.header .user-menu {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    padding: 0;
+    margin: 0;
+}
+
+.header .user-menu ul {
+    background: white;
+    padding: 0.4em 0;
+    border: 1px solid black;
+    position: relative;
+    border-radius: 5px;
+}
+
+.header .user-menu ul:before, .header .user-menu ul:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.header .user-menu ul:before {
+    border-bottom: 10px solid black;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+}
+
+.header .user-menu ul:after {
+    margin-top: 2px;
+    border-bottom: 8px solid white;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+}
+
+.header .user-menu ul li {
+    background: rgba(0,0,0,0.1);
+    display: block;
+    padding: 0.2em 1em;
+}
+
+.header .user-menu ul li:hover {
+    background: rgba(0,0,0,0.2);
+    font-weight: 600;
+    cursor: pointer;
+}
+
 .content {
     height: auto;
     min-height: calc(100% - 11.5em);
     width: calc(100% - 30px);
     margin: 0.5em 15px 2em;
+    display: inline-block;
 }
 
 .planner {
@@ -266,9 +328,10 @@ li {
     display: inline-block;
 }
 
-.agenda table {
+.agenda-data {
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 .agenda-header {
@@ -277,6 +340,12 @@ li {
     width: 100%;
     display: inline-block;
     border-bottom: 1px solid black;
+}
+
+.agenda .agenda-header table {
+    float: left;
+    position: relative;
+    overflow: hidden;
 }
 
 .agenda-header tr {
@@ -288,10 +357,11 @@ li {
     text-align: center;
     height: 2em;
     line-height: 2em;
-    width: calc(100% / 7);
+    width: 100%;
     color: white;
     display: inline-block;
     float: left;
+    position: relative;
 }
 
 .agenda-content {
@@ -299,24 +369,23 @@ li {
     display: inline-block;
     width: 100%;
     background: rgba(255,255,255,0.6);
+    overflow: scroll;
+    position: relative;
+    float: left;
 }
 
 .agenda-content tr {
     width: 100%;
-    height: calc(100% / 6);
     display: inline-block;
 }
 
 .agenda-content td {
-    width: calc(100% / 7);
     height: 100%;
     text-align: center;
     display: inline-block;
     float: left;
     margin: 0;
     position: relative;
-    border: 0.5px solid rgba(0,0,0,0.1);
-    background: rgba(255,255,255,0.4);
 }
 
 .agenda-content td.disabled {
@@ -324,11 +393,87 @@ li {
     opacity: 0.7;
 }
 
-.agenda-content td.active {
-    background: rgba(255,255,255,0.6)
+.agenda .sidebar {
+    height: auto;
+    min-height: 100%;
+    width: var(--sidebarWidth);
+    float: left;
+    background: var(--mainColor2);
+    margin: 0;
+    padding: 0;
+    border-right: 1px solid rgba(0,0,0,0.8);
+    display: inline-block;
+    position: relative;
 }
 
-.agenda-content td .day {
+.agenda .sidebar .list {
+    height: auto;
+    width: 100%;
+    display: inline-block;
+    padding: var(--plannerRowPadding) 0;
+    margin: 0;
+    float: left;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.agenda .sidebar .list li {
+    width: 100%;
+    height: calc(var(--plannerRowHeight) * 2);
+    line-height: 0;
+    position: relative;
+    float: left;
+    background: none;
+    border: 0;
+    text-align: right;
+    font-weight: bold;
+    padding-right: 1em;
+    margin: 0;
+}
+
+.agenda .sidebar .list li:last-of-type {
+    height: 1px;
+}
+
+.agenda .sidebar .list li:before, .agenda .sidebar .list  li:after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: var(--plannerRowHeight);
+}
+
+.agenda .sidebar .list  li:before {
+    border-top: 1px solid black;
+    width: 0.6em;
+}
+
+.agenda .sidebar .list li:not(:last-of-type):after {
+    top: var(--plannerRowHeight);
+    border-top: 1px dashed black;
+    width: 0.3em;
+}
+
+.agenda .sidebar-title {
+    height: var(--headerHeight);
+    width: var(--sidebarWidth);
+    display: inline-block;
+    float: left;
+    text-align: center;
+    font-weight: bold;
+    line-height: 2em;
+    color: white;
+    border-right: 1px solid rgba(0,0,0,0.8);
+    margin: 0;
+    padding: 0;
+    background: var(--mainColor1);
+    border-bottom: 1px solid black;
+    position: relative;
+    z-index: 2;
+}
+
+.agenda .agenda-content td .day {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -369,6 +514,283 @@ li {
     box-shadow: 0 0 1px 3px var(--mainColor1);
 }
 
+.agenda-content .appdata {
+    width: calc(100% - var(--sidebarWidth));
+    height: auto;
+    min-height: 100%;
+    float: left;
+    position: relative;
+    display: inline-block;
+}
+
+.agenda-content .appdata .approws {
+    width: auto;
+    min-width: 100%;
+    height: auto;
+    position: relative;
+    left: 0;
+    padding: 0;
+    display: inline-block;
+    margin: 0;
+    float: left;
+}
+
+.agenda-content .appdata .approws .day {
+    width: calc(100% / 3);
+    height: 100%;
+    display: inline-block;
+    float: left;
+    position: relative;
+    margin: 0;
+}
+
+.agenda-content .appdata .approws .day.disabled {
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0.8);
+}
+
+.agenda-content .appdata .approws .rows {
+    height: auto;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    padding: var(--plannerRowPadding) 0;
+    float: left;
+}
+
+.agenda-content .appdata .approws .rows li {
+    height: var(--plannerRowHeight);
+    width: 100%;
+    border-top: 1px solid black;
+}
+
+.agenda-content .appdata .approws .day.disabled .rows li {
+    border-color: rgba(0,0,0,0.4);
+}
+
+.agenda-content .appdata .approws .rows li:nth-child(even){
+    border-top: 1px dashed black;
+}
+
+.agenda-content .appdata .approws .rows li:last-of-type {
+    height: 1px;
+}
+
+.agenda-content .appdata .applist {
+    position: absolute;
+    display: inline-block;
+    top: var(--plannerRowPadding);
+    left: 0;
+    height: calc(100% - var(--plannerRowPadding));
+    width: 100%;
+}
+
+.agenda-content .appdata .applist .app {
+    position: absolute;
+    top: 0;
+    width: calc(100% - var(--appPaddingX)*2);
+    height: calc(var(--plannerRowHeight)*2 - var(--appPaddingY)*2);
+    margin: var(--appPaddingY) var(--appPaddingX);
+    border: 1px solid black;
+    border-radius: 6px;
+    background: var(--mainColor1);
+    box-shadow: inset 0 0 0 1px var(--mainColor2), 0 1px 0 1px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.agenda-content .appdata .applist .app .extra {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 3em;
+    height: 1.4em;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.agenda-content .appdata .applist .app .extra .icon {
+    display: inline-block;
+    float: left;
+    height: 1.2em;
+    width: 1.2em;
+    margin: 0.1em 0.15em;
+    line-height: 1.1em;
+}
+
+.agenda-content .appdata .applist .app .title {
+    display: inline-block;
+    float: left;
+    height: 24px;
+    width: 100%;
+    margin: 0;
+    line-height: 18px;
+    color: white;
+    font-weight: bold;
+    padding: 3px 3.5em 3px 0.5em;
+    border-radius: 4px 4px 0 0;
+}
+
+.agenda-content .appdata .applist .app .desc {
+    display: inline-block;
+    float: left;
+    background: white;
+    width: calc(100% - 4px);
+    height: calc(100% - 25px);
+    padding: 0 6px;
+    margin: 0 2px;
+    border-radius: 4px;
+    border: 2px solid var(--mainColor1);
+    box-shadow: 0 0 0 1px var(--mainColor2), inset 0 0 1px 1px rgba(0,0,0,0.4);
+    position: relative;
+    font-size: 0.8em;
+    line-height: 22px;
+}
+
+/* agenda daily */
+
+.agenda.day .sidebar {
+    display: inline-block;
+    overflow: hidden;
+}
+
+.agenda.day .disabled:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+}
+
+.agenda.day .agenda-header {
+    position: relative;
+}
+
+.agenda.day .agenda-header table {
+    float: left;
+    width: calc(100% - var(--sidebarWidth));
+    position: relative;
+    overflow: hidden;
+}
+
+.agenda.day .agenda-header table thead {
+    width: 180%;
+    display: inline-block;
+    position: relative;
+    left: -40%;
+}
+
+.agenda.day .agenda-header th {
+    width: calc(100% / 3);
+}
+
+.agenda.day .agenda-header th.disabled {
+    border-color: black;
+    border-style: solid;
+    border-width: 0 1px;
+}
+
+.agenda.day .agenda-content .appdata {
+    display: inline-block;
+    overflow: hidden;
+}
+
+.agenda.day .agenda-content {
+    overflow-y: overlay;
+    overflow-x: hidden;
+}
+
+.agenda.day .agenda-content::-webkit-scrollbar {
+    display: block;
+}
+
+.agenda.day .agenda-content .appdata .approws {
+    width: 180%;
+    left: -40%;
+}
+
+/* agenda weekly */
+
+.agenda.week .sidebar {
+    position: sticky;
+    position: -webkit-sticky;
+    left: 0;
+    z-index: 2;
+}
+
+.agenda.week .sidebar-title {
+    position: sticky;
+    position: -webkit-sticky;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.agenda.week .agenda-header {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.agenda.week .agenda-header table {
+    width: 100%;
+}
+
+.agenda.week .agenda-header th,
+.agenda.week .agenda-content .approws .day {
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0.2);
+}
+
+.agenda.week .agenda-header th:first-of-type,
+.agenda.week .agenda-content .approws .day:first-of-type {
+    border-left-color: transparent;
+}
+
+.agenda.week .agenda-header th:last-of-type,
+.agenda.week .agenda-content .approws .day:last-of-type {
+    border-right-color: transparent;
+}
+
+.agenda.week .agenda-content {
+    height: 100%;
+    overflow: scroll;
+}
+
+.agenda.week .agenda-content::-webkit-scrollbar {
+    display: block;
+}
+
+.agenda.week .agenda-header th:nth-child(odd), .agenda.week .agenda-content .appdata .approws .day:nth-child(odd) {
+    background: rgba(0,0,0,0.2);
+}
+
+/* agenda monthly */
+
+.agenda.month .agenda-header th {
+    width: calc(100% / 7);
+}
+
+.agenda.month .agenda-content tr {
+    height: calc(100% / 6);
+}
+
+.agenda.month .agenda-content td {
+    width: calc(100% / 7);
+    border: 0.5px solid rgba(0,0,0,0.1);
+    background: rgba(255,255,255,0.4);
+}
+
+.agenda.month .agenda-content td.active {
+    background: rgba(255,255,255,0.6)
+}
+
 .agenda-content td .totalmsgs {
     position: absolute;
     top: 0;
@@ -378,6 +800,128 @@ li {
     border: 1px solid rgba(0,0,0,0.4);
     border-radius: 4px;
     box-shadow: inset 0 0 0 2px rgba(255,255,255,0.3);
+}
+
+/* main scrollbar */
+
+/* agenda scrollbar */
+
+.agenda-content::-webkit-scrollbar {
+    display: none;
+    width: 10px;
+    height: 12px;
+    box-shadow: inset 0 0 1px 1px gray, inset 0 0 8px 8px rgba(255,255,255,0.1);
+}
+
+.agenda-content::-webkit-scrollbar {
+    background: transparent;
+}
+
+.agenda-content::-webkit-scrollbar-track {
+    border-width: 3px 0;
+    border-style: solid;
+    border-color: transparent;
+    background: transparent;
+}
+
+.agenda-content::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0px 8px grey;
+    border-width: 2px 0;
+    border-style: solid;
+    border-color: transparent;
+}
+
+.agenda-content::-webkit-scrollbar-corner {
+    box-shadow: inset 0 0 3px 2px rgba(0,0,0,0.2);
+    border-radius: 0 0 6px 0;
+}
+
+.form-box {
+    background: white;
+    display: inline-block;
+    position: relative;
+    width: auto;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid black;
+    padding: 0;
+    margin: auto;
+}
+
+.form-box .title {
+    padding: 0.4em 1em;
+    margin: 0;
+    border-bottom: 1px solid black;
+    color: white;
+    background: var(--mainColor1);
+    border: 2px solid var(--mainColor2);
+    font-weight: bold;
+    font-size: 18px;
+    border-radius: 6px 6px 0 0;
+}
+
+.form-box .content {
+    border-top: 1px solid black;
+    padding: 0.2em 0.4em;
+    margin: 0;
+    width: auto;
+    position: relative;
+}
+
+.form-box td, .form-box input {
+    position: relative;
+}
+
+.form-box label {
+    display: inline-block;
+    width: 100%;
+    position: relative;
+}
+
+.form-box a {
+    text-decoration: underline;
+}
+
+.form-box .btn-list {
+    float: right;
+}
+
+.form-box .req-info {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-weight: 500;
+    color: white;
+    background: red;
+    border-radius: 6px;
+    padding: 0.3em 0.8em;
+    border: 1px solid black;
+}
+
+.form-box .req-info:before, .form-box .req-info:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+}
+
+.form-box .req-info:before {
+    border-right: 12px solid black;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+.form-box .req-info:after {
+    border-right: 10px solid red;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    margin-left: 2px;
 }
 
 .footer {

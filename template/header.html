@@ -1,24 +1,42 @@
-﻿<div class="header">
+﻿<div class="header" ng-controller="loginController">
     <div class="navbar">
         <div class="logo navbar-brand">
             <img src="src/images/logo.png"/>
         </div>
 
         <nav>
-            <ul>
-                <li>
-                    <a ui-sref="root">
+            <ul ng-hide="isLoggedIn()">
+                <li ui-sref="login">
+                    <a>
+                        <img class="icon" src="src/images/icons/login.svg"/>
+                        
+                        <p>Inloggen</p>
+                    </a>
+                </li>
+            </ul>
+            
+            <ul ng-show="isLoggedIn()">
+                <li ui-sref="root">
+                    <a>
                         <img class="icon" src="src/images/icons/planner.svg"/>
+
                         <p>Agenda</p>
                     </a>
                 </li>
-
+                
                 <li>
-                    <a ui-sref="settings">
+                    <a data-toggle="dropdown">
                         <img class="icon" src="src/images/icons/login.svg"/>
 
-                        <p>Inloggen</p>
+                        <p>Welkom!</p>
                     </a>
+
+                    <div class="dropdown-menu user-menu">
+                        <ul>
+                            <li ui-sref="settings">Instellingen</li>
+                            <li ng-click="logout()">Uitloggen</li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
         </nav>

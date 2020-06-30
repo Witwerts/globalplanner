@@ -1,14 +1,12 @@
 ﻿<div ui-view="header"></div>
 
-<script src="src/scripts/app.js"></script>
-
 <div class="content d-flex">
-    <div class="planner col-xl-7 col-lg-10 col-md-11 col-sm-12">
+    <div class="planner col-xl-7 col-lg-10 col-md-11 col-sm-12" ng-show="checkLoggedIn()">
         <div class="form-row planner-header">
             <div class="col-4 header-left d-flex">
                 <div class="btn-group show-types" role="group" data-toggle="buttons">
-                    <label class="btn" ng-repeat="type in showTypes" ng-click="settings.showType = type" ng-class="{ active: settings.showType == type }" >
-                        <input type="radio" name="planner-show" ng-checked="settings.showType == type"> {{ type.title }}
+                    <label class="btn" ng-repeat="(key, value) in showTypes" ng-click="settings.showType = value" ng-class="{ active: settings.showType == value }" >
+                        <input type="radio" name="planner-show" ng-checked="settings.showType == value"> {{ value.title }}
                     </label>
                 </div>
             </div>
@@ -16,7 +14,12 @@
             <div class="col header-center">
                 <div class="btn-group currData">
                     <button class="btn prev" ng-click="settings.currTime = getNextDate(settings.currTime, settings.showType.addSeconds(settings.currTime, -1))">&lt;</button>
-                    <span class="curr">{{ settings.currTime | date: settings.showType.dateFormat }}</span>
+
+                    <span class="curr">
+                        <span class="d-block d-md-none">{{ settings.currTime | date: settings.showType.dateFormatShort }}</span>
+                        <span class="d-none d-md-block">{{ settings.currTime | date: settings.showType.dateFormat }}</span>
+                    </span>
+
                     <button class="btn next" ng-click="settings.currTime = getNextDate(settings.currTime, settings.showType.addSeconds(settings.currTime, 1))">&gt;</button>
                 </div>
             </div>
@@ -29,28 +32,161 @@
             </div>
         </div>
 
-        <div class="planner-content" ng-switch="settings.showType.key">
-            <div ng-switch-when="day" class="agenda day">
-                <h2>{{ settings.showType.title }}:</h2>
+        <div class="planner-content" ng-switch="getKeyByValue(showTypes, settings.showType)">
+            <div ng-switch-when="day" class="agenda day" ng-model="settings.currTime" ng-init="dayTime = 24*60*60*1000;">
+                <div class="agenda-data">
+                    <div class="agenda-header d-flex">
+                        <div class="sidebar-title" >
+                            {{ settings.currTime | date: 'Z' }}
+                        </div>
+
+                        <table>
+                            <thead>
+                            <th class="disabled prev">
+                                <span>{{ getNextDate(settings.currTime, settings.currTime - dayTime) | date: settings.showType.dateFormat }}</span>
+                            </th>
+
+                            <th>
+                                <span>{{ settings.currTime | date: settings.showType.dateFormat }}</span>
+                            </th>
+
+                            <th class="disabled next">
+                                <span>{{ getNextDate(settings.currTime, settings.currTime + dayTime) | date: settings.showType.dateFormat }}</span>
+                            </th>
+                            </thead>
+                        </table>
+                    </div>
+
+                    <div class="agenda-content" >
+                        <div class="sidebar">
+                            <ul class="list">
+                                <li ng-repeat="t in getRange(settings.startHour, settings.endHour)">
+                                    {{("0"+ (t %  24)).slice(-2) }}:00
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="appdata">
+                            <ul class="approws">
+                                <li class="day prev disabled">
+                                    <ul class="rows">
+                                        <li ng-repeat="r in getRange(settings.startHour*2, settings.endHour*2)"></li>
+                                    </ul>
+
+                                    <ul class="applist">
+                                        <li class="app">
+                                            <ul class="extra">
+                                                <li class="icon edit"></li>
+                                                <li class="icon cls"></li>
+                                            </ul>
+
+                                            <p class="title">Afspraak titel</p>
+                                            <p class="desc">Afspraak beschrijving</p>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li class="day curr">
+                                    <ul class="rows">
+                                        <li ng-repeat="r in getRange(settings.startHour*2, settings.endHour*2)"></li>
+                                    </ul>
+
+                                    <ul class="applist">
+                                        <li class="app">
+                                            <ul class="extra">
+                                                <li class="icon edit"></li>
+                                                <li class="icon cls"></li>
+                                            </ul>
+
+                                            <p class="title">Afspraak titel</p>
+                                            <p class="desc">Afspraak beschrijving</p>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li class="day next disabled">
+                                    <ul class="rows">
+                                        <li ng-repeat="r in getRange(settings.startHour*2, settings.endHour*2)"></li>
+                                    </ul>
+
+                                    <ul class="applist">
+                                        <li class="app">
+                                            <ul class="extra">
+                                                <li class="icon edit"></li>
+                                                <li class="icon cls"></li>
+                                            </ul>
+
+                                            <p class="title">Afspraak titel</p>
+                                            <p class="desc">Afspraak beschrijving</p>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div ng-switch-when="week" class="agenda week">
-                <h2>{{ settings.showType.title }}:</h2>
+                <div class="agenda-data">
+                    <div class="agenda-content">
+                        <div class="sidebar">
+                            <div class="sidebar-title" >
+                                {{ settings.currTime | date: 'Z' }}
+                            </div>
+
+                            <ul class="list">
+                                <li ng-repeat="t in getRange(settings.startHour, settings.endHour)">
+                                    {{("0"+ (t %  24)).slice(-2) }}:00
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="appdata" ng-init="totaldays = 7">
+                            <div class="approws" style="width: {{ ((totaldays)*100)/3 }}%">
+                                <div class="agenda-header d-flex">
+                                    <table>
+                                        <thead>
+                                        <th ng-repeat="dayTime in getWeek(settings.currTime)" style="width: {{ (100/totaldays) }}%">{{ dayTime | date: showTypes["day"].dateFormatShort }}</th>
+                                        </thead>
+                                    </table>
+                                </div>
+
+                                <ul class="list">
+                                    <li ng-repeat="dayTime in getWeek(settings.currTime)" style="width: {{ (100/totaldays) }}%" class="day">
+                                        <ul class="rows">
+                                            <li ng-repeat="r in getRange(settings.startHour*2, settings.endHour*2)"></li>
+                                        </ul>
+
+                                        <ul class="applist">
+                                            <li class="app">
+                                                <ul class="extra">
+                                                    <li class="icon edit"></li>
+                                                    <li class="icon cls"></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div ng-switch-when="month" class="agenda month">
-                <table>
+                <table class="agenda-data">
                     <thead class="agenda-header">
-                        <th ng-repeat="n in range(settings.startDay,settings.startDay+6)">
+                        <th ng-repeat="n in getRange(settings.startDay,settings.startDay+6)">
                             <span class="day-short d-block d-md-none">{{ getShortDay(n) }}</span>
                             <span class="day-long d-none d-md-block">{{ getWeekDay(n) }}</span>
                         </th>
                     </thead>
-                    
+
                     <tbody class="agenda-content">
-                        <tr ng-repeat="w in range(0,5)">
+                        <tr ng-repeat="w in getRange(0,5)">
                             <td ng-repeat="dayTime in getWeek(getFirstDay(settings.currTime, true)+(w*7*24*60*60*1000), settings.startDay)" ng-init="firstDay = getFirstDay(settings.currTime); isDisabled = (dayTime < getPrevMonth(settings.currTime, false) || dayTime >= getNextMonth(settings.currTime, false));" ng-class="{ disabled: (isDisabled && !inCurrWeek(dayTime)), active: (inCurrWeek(dayTime)) }">
-                                <span class="badge badge-primary totalmsgs" ng-init='rand = getRand(0, 9)' ng-show="rand > 0 && !isDisabled && inCurrWeek(dayTime)">{{ rand }}</span>
+                                <span class="badge badge-primary totalmsgs" ng-init="rand = getRand(0, 9)" ng-show="rand > 0 && !isDisabled && inCurrWeek(dayTime)">{{ rand }}</span>
                                 <span class="day" ng-class="{ current: (settings.currTime == dayTime), today: (getToday(false) == dayTime) }" ng-click="settings.currTime = dayTime">{{ dayTime | date: 'd' }}</span>
                             </td>
                         </tr>
