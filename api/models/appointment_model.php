@@ -16,6 +16,31 @@ class Appointment_Model extends Endpoint{
         return $result;
     }
 
+    function getAvailableEmployeeId($time = null, $duration_min = null){
+        if($time != null && $duration_min != null){
+            $day_index = (date("w",$time) == 0) ? 6 : date("w",$time)-1;
+            $start_time = date("H:i:s",$time);
+            $end_time = date("H:i:s",($time + ($duration_min * 60)));
+            $checkEmployeeQuery = $this->db->select("SELECT * FROM workhour WHERE day_index = :day_index AND start_time >= :start_time AND end_time <= :end_time",array(
+                "day_index" => $day_index,
+                "start_time" => $start_time,
+                "end_time" => $end_time
+            ));
+            if(count($checkEmployeeQuery) > 0){
+                $idList = array();
+                foreach($checkEmployeeQuery as $key => $value){
+                    if($this->appointmentIsPossible($value['user_id'],$time,$duration_min,true)){
+                        array_push($idList,$value['user_id']);
+                    }
+                }
+                if(count($idList) > 0){
+                    return $idList[mt_rand(0, count($idList) - 1)];
+                }
+            }
+        }
+        return 0;
+    }
+
     function queryAllResultOnRoll(){
         $query = array();
         $timeBound = $this->getTimeBoundData();
@@ -90,7 +115,7 @@ class Appointment_Model extends Endpoint{
 
     function timeIsInWorkhours($user_id = null, $time = null){
         if($user_id != null && $time != null){
-            $day_index = date("w",$time)-1;
+            $day_index = (date("w",$time) == 0) ? 6 : date("w",$time)-1;
             $queryWorkhours = $this->db->select("SELECT * FROM workhour WHERE user_id=:uid AND day_index=:dind",array(
                 "uid" => $user_id,
                 "dind" => $day_index
@@ -316,16 +341,21 @@ class Appointment_Model extends Endpoint{
         if($this->jwtData != null){
             $app = $this->data;
             $this->responseCode = "400 Bad Request";
-            $this->output['message'] = "Please include type_id,user_id,employee_id,start_time";
-            if(isset($app['type_id'],$app['user_id'],$app['employee_id'],$app['start_time'])){
+            $this->output['message'] = "Please include type_id,start_time";
+            if(isset($app['type_id'],$app['start_time'])){
+                $app['user_id'] = $this->jwtData->data->id;
                 if($app['start_time'] < time()){
                     $this->responseCode = "400 Bad Request";
                     $this->output['message'] = "The given start_time is in the past";
                     return;
                 }
                 $this->responseCode = "409 Conflict";
-                $this->output['message'] = "This appointment can't be created, either the employee is not working or there is an existing appointment at this time";
+                $this->output['message'] = "This appointment can't be created, either there is no employee available or there is an existing appointment at this time";
                 $type = $this->getAppointmentTypeById($app['type_id']);
+                $app['employee_id'] = $this->getAvailableEmployeeId($app['start_time'],$type['duration_min']);
+                if($app['employee_id'] == 0){
+                    return;
+                }
                 if($this->appointmentIsPossible($app['user_id'],$app['start_time'],$type['duration_min']) && //Check if user available
                     $this->appointmentIsPossible($app['employee_id'],$app['start_time'],$type['duration_min'],true)){ //Check if employee available
                         $this->db->insert("appointment",array(
