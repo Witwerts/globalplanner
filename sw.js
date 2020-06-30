@@ -11,8 +11,15 @@ const assets = [
     'src/scripts/angular.min.js',
     'src/scripts/angular-locale_nl-nl.js',
     'src/scripts/angular-ui-router.min.js',
+    'src/scripts/ngStorage.min.js',
     'src/scripts/main.js',
-    'src/scripts/controllers.js',
+    'src/scripts/maincontroller.js',
+    'src/scripts/dataservice.js',
+    'src/scripts/userservice.js',
+    'src/scripts/plannerservice.js',
+    'src/scripts/agendacontroller.js',
+    'src/scripts/settingcontroller.js',
+    'src/scripts/logincontroller.js',
     'src/styles/bootstrap.min.css',
     'src/styles/main.css',
     'template/pages/agenda.html',
@@ -20,8 +27,6 @@ const assets = [
     'template/pages/fallback.html',
     'src/images/icons/planner.svg',
     'src/images/icons/login.svg',
-    'template/footer.html',
-    'template/header.html'
 ];
 
 // install service worker

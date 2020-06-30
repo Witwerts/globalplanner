@@ -1,0 +1,53 @@
+﻿<div ui-view="header"></div>
+
+<div class="content d-flex">
+    <div class="form-box login">
+        <form name="form" autocomplete="off" novalidate>
+            <p class="title">Registreren</p>
+
+            <div class="content">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Email:</td>
+    
+                            <td>
+                                <input type="text" ng-model="user.mail" name="uMail" required="" autocomplete="off" />
+    
+                                <p class="req-info" ng-show="form.$submitted && form.uMail.$error.required">Vul een e-mailadres in!</p>
+                            </td>
+                        </tr>
+    
+                        <tr>
+                            <td>Wachtwoord:</td>
+    
+                            <td>
+                                <input type="password" ng-model="user.pass" name="uPass" required="" autocomplete="off"/>
+    
+                                <p class="req-info" ng-show="form.$submitted && form.uPass.$error.required">Vul een wachtwoord in!</p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Bevestig wachtwoord:</td>
+
+                            <td>
+                                <input type="password" ng-model="user.pass2" name="uPass2" required="" autocomplete="off" />
+
+                                <p class="req-info" ng-show="form.$submitted && form.uPass2.$error.required">Bevestig uw wachtwoord!</p>
+                                <p class="req-info" ng-show="form.$submitted && form.uPass != form.uPass2">U heeft niet hetzelfde wachtwoord opgegeven!</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <ul class="btn-list">
+                    <input type="submit" ng-click="register()" value="Registreer" />
+                </ul>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div ui-view="footer"></div>
