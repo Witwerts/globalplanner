@@ -27,7 +27,7 @@
                 .then(function successCallback(response) {
                     callback(response.data);
                 }, function errorCallback(response) {
-                    callback(response);
+                    callback(response.data);
                 });
         }
 

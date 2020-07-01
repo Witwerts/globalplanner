@@ -1,5 +1,5 @@
-﻿controllers.controller("agendaController", ["$rootScope", "$http", "$locale", "$window", "userService", "plannerService", "dataService", 
-    function agendaController($rootScope, $http, $locale, $window, $uc, $ps, $ds) {
+﻿controllers.controller("agendaController", ["$rootScope", "$http", "$locale", "$window", "userService", "plannerService", "dataService", "$location",
+    function agendaController($rootScope, $http, $locale, $window, $uc, $ps, $ds, $location) {
         $rootScope.remainingWeekDays = 7;
         $rootScope.daysInMonth = 31;
         $rootScope.showTypes = {
@@ -207,10 +207,13 @@
                 console.log("appointmentType: " + this.appointmentType.value);
                 console.log(toSend);
                 if(result.success){
+                    $location.path("/");
+                }
+                else {
 
                 }
                 
-                callback(result.success, result.data);
+                
             }, false);
         }
         $rootScope.getAppointmentTypes = function() {

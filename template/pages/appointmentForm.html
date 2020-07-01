@@ -1,19 +1,20 @@
 <div ui-view="header"></div>
 
-<div class="content d-flex">
+<div class="content d-flex" ng-init="getAppointmentTypes()">
     <div class="form-box">
         <form name="form" ng-submit="makeAppointment()" novalidate>
             <p class="title">Maak een afspraak</p>
             
-            <div class="content">
+            <div class="content" ng-class="{true: 'error'}[submitted && form.appointment.type.$invalid]">
                 <table>
                     <tbody>
                         <tr>
                             <td>Type afspraak:</td>
                             
                             <td>
-                                <select ng-init="getAppointmentTypes()" ng-model="appointment.type" id="appointmentType" class="form-control form-control-inline planner-type">
-                                    <option ng-repeat="type in appointmentTypes" value="{{ type.aptype_id }}"> {{ type.name }} </option>
+                                <select ng-init="" ng-model="appointment.type" id="appointmentType" class="form-control form-control-inline planner-type" name="appointmentType">
+                                    <option value="" ng>-- Kies een type --</option>
+                                    <option ng-repeat="type in appointmentTypes" value="{{ type.aptype_id }}" > {{ type.name }} </option>
                                 </select>
 
                                 <p class="req-info" ng-show="form.$submitted && form.appointmentType.$error.required">Kies uw type afspraak!</p>
