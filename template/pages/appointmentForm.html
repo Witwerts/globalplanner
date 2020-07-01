@@ -1,0 +1,15 @@
+<h2>Make an Appointment!</h2>
+
+<form action="">
+    <label for="appointmentTypes">Choose the type of appointment: </label>
+    <select id="appointmentTypes" ng-options="type as type.name for type in types">
+        <option value="">Select a type</option>
+    </select>
+
+    <label for="Customer">Choose the customer: </label>
+    <select id="Customers" ng-options="customer as customer.id for customer in customers">
+        <option value="">Select customer</option>
+    </select>
+
+    
+</form>
