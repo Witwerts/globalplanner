@@ -1,5 +1,5 @@
-﻿controllers.controller("agendaController", ["$rootScope", "$http", "$locale", "$window", "userService", "plannerService", 
-    function agendaController($rootScope, $http, $locale, $window, $uc, $ps) {
+﻿controllers.controller("agendaController", ["$rootScope", "$http", "$locale", "$window", "userService", "plannerService", "dataService", 
+    function agendaController($rootScope, $http, $locale, $window, $uc, $ps, $ds) {
         $rootScope.remainingWeekDays = 7;
         $rootScope.daysInMonth = 31;
         $rootScope.showTypes = {
@@ -199,5 +199,28 @@
 
         $rootScope.shortWeekDays = $locale.DATETIME_FORMATS.SHORTDAY;
         $rootScope.weekDays = $locale.DATETIME_FORMATS.DAY;
+
+        $rootScope.makeAppointment = function() {
+            var toSend = { "type_id": this.appointment.type, "start_time": new Date(this.appointment.date).getTime()};
+            $ds.postData('api/appointment', JSON.stringify(toSend), function(result){
+                console.log("appointmentDate: " + new Date(this.appointmentDate.value).getTime());
+                console.log("appointmentType: " + this.appointmentType.value);
+                console.log(toSend);
+                if(result.success){
+
+                }
+                
+                callback(result.success, result.data);
+            }, false);
+        }
+        $rootScope.getAppointmentTypes = function() {
+            $ds.getData('api/appointment/type', {}, function(response) {
+                if(response.success){
+                    $rootScope.appointmentTypes = response.data;
+                }else{
+                    $rootScope.appointmentTypes = [];
+                }
+            }, true);
+        }
     }
 ])
