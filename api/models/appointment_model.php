@@ -12,7 +12,7 @@ class Appointment_Model extends Endpoint{
     function getTimeBoundData(){
         $result = array();
         $result['time_from'] = (isset($this->data['time_from']) ? $this->data['time_from'] : 0);
-        $result['time_to'] = (isset($this->data['time_to']) ? $this->data['time_to'] : time());
+        $result['time_to'] = (isset($this->data['time_to'])) ? $this->data['time_to'] : (time() + 31536000);
         return $result;
     }
 
@@ -375,6 +375,12 @@ class Appointment_Model extends Endpoint{
 
     function getAppointment($id = null){
         if($id != null){
+
+            if($this->jwtData == null){
+                $this->output['message'] = "No valid JWT supplied";
+                $this->responseCode = "400 Bad Request";
+                return;
+            }
             
             $this->output['message'] = "Appointment with id $id not found";
             $appointmentQuery = $this->db->select("SELECT * FROM appointment a 

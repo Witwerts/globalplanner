@@ -49,7 +49,7 @@ class Endpoint extends Model{
         if(isset($headers['Authorization'])){
             $explodedHeader = explode(" ", $headers['Authorization']);
             if(count($explodedHeader) == 2){
-                $jwtHeader = $explodedHeader[1];
+                $jwtHeader = trim($explodedHeader[1]);
                 try {
 
                     $this->jwt = $jwtHeader;
