@@ -26,17 +26,17 @@ gpApp.config(['$stateProvider', "$urlRouterProvider", "$httpProvider", function(
                 }
             }
         })
-        .state('test', {
-            url: '/test',
+        .state('makeAppointment', {
+            url: '/appointment/make',
             views: {
-                'header@test': {
+                'header@makeAppointment': {
                     templateUrl: 'template/header.html'
                 },
                 '@': {
                     templateUrl: 'template/pages/appointmentForm.html',
                     controller: 'agendaController'
                 },
-                'footer@test': {
+                'footer@makeAppointment': {
                     templateUrl: 'template/footer.html'
                 }
             }
