@@ -1,6 +1,6 @@
 ﻿<div ui-view="header"></div>
 
-<div class="content d-flex">
+<div class="content d-flex" ng-init="getAppointments()" >
     <div class="planner col-xl-7 col-lg-10 col-md-11 col-sm-12" ng-show="checkLoggedIn()">
         <div class="form-row planner-header">
             <div class="col-4 header-left d-flex">

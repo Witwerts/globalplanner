@@ -225,5 +225,18 @@
                 }
             }, true);
         }
+        $rootScope.getAppointments = function() {
+            $ds.getData('api/appointment', {}, function(response) {
+                if(response.success){
+                    console.log(response.data);
+                    $rootScope.appointments = response.data;
+                }
+                else{
+
+                    console.log(response.data);
+                    $rootScope.appointments = [];
+                }
+            }, true);
+        }
     }
 ])
