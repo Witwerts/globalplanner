@@ -201,7 +201,7 @@
         $rootScope.weekDays = $locale.DATETIME_FORMATS.DAY;
 
         $rootScope.makeAppointment = function() {
-            var toSend = { "type_id": this.appointment.type, "start_time": new Date(this.appointment.date).getTime()};
+            var toSend = { "type_id": this.appointment.type, "start_time": new Date(this.appointment.date).getTime()/1000};
             $ds.postData('api/appointment', JSON.stringify(toSend), function(result){
                 console.log("appointmentDate: " + new Date(this.appointmentDate.value).getTime());
                 console.log("appointmentType: " + this.appointmentType.value);

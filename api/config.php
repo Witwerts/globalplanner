@@ -6,9 +6,9 @@ define('APP_NAME', 'MVC Base');
 //Database constants
 define('DB_TYPE','mysql');
 define('DB_URL','127.0.0.1');
-define('DB_NAME','afsprakenproject');
+define('DB_NAME','globalplanner');
 define('DB_USER','root');
-define('DB_PASS','DKbNWCere4gAz3YE');
+define('DB_PASS','');
 
 // Url constants
 define('URL', 'http://localhost/');
