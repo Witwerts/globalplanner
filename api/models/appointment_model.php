@@ -21,7 +21,7 @@ class Appointment_Model extends Endpoint{
             $day_index = (date("w",$time) == 0) ? 6 : date("w",$time)-1;
             $start_time = date("H:i:s",$time);
             $end_time = date("H:i:s",($time + ($duration_min * 60)));
-            $checkEmployeeQuery = $this->db->select("SELECT * FROM workhour WHERE day_index = :day_index AND start_time >= :start_time AND end_time <= :end_time",array(
+            $checkEmployeeQuery = $this->db->select("SELECT * FROM workhour WHERE day_index = :day_index AND start_time <= :start_time AND end_time >= :end_time",array(
                 "day_index" => $day_index,
                 "start_time" => $start_time,
                 "end_time" => $end_time
@@ -354,6 +354,7 @@ class Appointment_Model extends Endpoint{
                 $type = $this->getAppointmentTypeById($app['type_id']);
                 $app['employee_id'] = $this->getAvailableEmployeeId($app['start_time'],$type['duration_min']);
                 if($app['employee_id'] == 0){
+                    $this->output['message'] = "There is no employee available at this time";
                     return;
                 }
                 if($this->appointmentIsPossible($app['user_id'],$app['start_time'],$type['duration_min']) && //Check if user available
