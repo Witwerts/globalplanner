@@ -375,6 +375,12 @@ class Appointment_Model extends Endpoint{
 
     function getAppointment($id = null){
         if($id != null){
+
+            if($this->jwtData == null){
+                $this->output['message'] = "No valid JWT supplied";
+                $this->responseCode = "400 Bad Request";
+                return;
+            }
             
             $this->output['message'] = "Appointment with id $id not found";
             $appointmentQuery = $this->db->select("SELECT * FROM appointment a 
