@@ -18,9 +18,9 @@ class Appointment_Model extends Endpoint{
 
     function getAvailableEmployeeId($time = null, $duration_min = null){
         if($time != null && $duration_min != null){
-            $day_index = (date("w",$time) == 0) ? 6 : date("w",$time)-1;
-            $start_time = date("H:i:s",$time);
-            $end_time = date("H:i:s",($time + ($duration_min * 60)));
+            $day_index = (date("w",intval($time)) == 0) ? 6 : date("w",intval($time))-1;
+            $start_time = date("H:i:s",intval($time));
+            $end_time = date("H:i:s",(intval($time) + ($duration_min * 60)));
             $checkEmployeeQuery = $this->db->select("SELECT * FROM workhour WHERE day_index = :day_index AND start_time <= :start_time AND end_time >= :end_time",array(
                 "day_index" => $day_index,
                 "start_time" => $start_time,
@@ -159,7 +159,7 @@ class Appointment_Model extends Endpoint{
             }
             foreach($user_app as $key => $value){
                 $app = $this->formatAppointment($value);
-                if($this->timeIsInAppointment($app['appointment_id'],$app['start_time']) || $this->timeIsInAppointment($app['appointment_id'],$app['end_time'])){
+                if($this->timeIsInAppointment($app['appointment_id'],$start_time) || $this->timeIsInAppointment($app['appointment_id'],($start_time + ($duration_min * 60)))){
                     if($app['appointment_id'] != $exclude_id){
                         return false;
                     }
@@ -350,26 +350,31 @@ class Appointment_Model extends Endpoint{
                     return;
                 }
                 $this->responseCode = "409 Conflict";
-                $this->output['message'] = "This appointment can't be created, there is an existing appointment at this time";
+                
                 $type = $this->getAppointmentTypeById($app['type_id']);
                 $app['employee_id'] = $this->getAvailableEmployeeId($app['start_time'],$type['duration_min']);
                 if($app['employee_id'] == 0){
                     $this->output['message'] = "There is no employee available at this time";
                     return;
                 }
-                if($this->appointmentIsPossible($app['user_id'],$app['start_time'],$type['duration_min']) && //Check if user available
-                    $this->appointmentIsPossible($app['employee_id'],$app['start_time'],$type['duration_min'],true)){ //Check if employee available
-                        $this->db->insert("appointment",array(
-                            "user_id" => $app['user_id'],
-                            "employee_id" => $app['employee_id'],
-                            "start_time" => $app['start_time'],
-                            "aptype_id" => $app['type_id']
-                        ));
-                        $this->responseCode = "201 Created";
-                        $this->output['message'] = "Appointment created";
-                        $this->output['success'] = true;
-                        $this->output['data'] = $app;
+                if(!$this->appointmentIsPossible($app['user_id'],$app['start_time'],$type['duration_min'])){
+                    $this->output['message'] = "This appointment can't be created, user already has an appointment at this time";
+                    return;
+                } //Check if user available
+                if(!$this->appointmentIsPossible($app['employee_id'],$app['start_time'],$type['duration_min'],true)){ //Check if employee available
+                    $this->output['message'] = "This appointment can't be created, employee has an appointment at this time";
+                    return;
                 }
+                $this->db->insert("appointment",array(
+                    "user_id" => $app['user_id'],
+                    "employee_id" => $app['employee_id'],
+                    "start_time" => $app['start_time'],
+                    "aptype_id" => $app['type_id']
+                ));
+                $this->responseCode = "201 Created";
+                $this->output['message'] = "Appointment created";
+                $this->output['success'] = true;
+                $this->output['data'] = $app;
             }
         }
     }
