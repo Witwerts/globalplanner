@@ -350,7 +350,7 @@ class Appointment_Model extends Endpoint{
                     return;
                 }
                 $this->responseCode = "409 Conflict";
-                $this->output['message'] = "This appointment can't be created, either there is no employee available or there is an existing appointment at this time";
+                $this->output['message'] = "This appointment can't be created, there is an existing appointment at this time";
                 $type = $this->getAppointmentTypeById($app['type_id']);
                 $app['employee_id'] = $this->getAvailableEmployeeId($app['start_time'],$type['duration_min']);
                 if($app['employee_id'] == 0){
