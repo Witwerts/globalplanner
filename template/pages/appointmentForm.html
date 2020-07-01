@@ -1,0 +1,44 @@
+<div ui-view="header"></div>
+
+<div class="content d-flex">
+    <div class="form-box">
+        <form name="form" ng-submit="makeAppointment()" novalidate>
+            <p class="title">Maak een afspraak</p>
+            
+            <div class="content">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Type afspraak:</td>
+                            
+                            <td>
+                                <select ng-init="getAppointmentTypes()" ng-model="appointment.type" id="appointmentType" class="form-control form-control-inline planner-type">
+                                    <option ng-repeat="type in appointmentTypes" value="{{ type.aptype_id }}"> {{ type.name }} </option>
+                                </select>
+
+                                <p class="req-info" ng-show="form.$submitted && form.appointmentType.$error.required">Kies uw type afspraak!</p>
+                            </td>
+                        </tr>
+                
+                        <tr>
+                            <td>Kies een datum en tijd:</td>
+                            
+                            <td>
+                                <input ng-model="appointment.date" type="datetime-local" id="appointmentDate" name="dateTime" required="" autocomplete="off" value="" />
+    
+                                <p class="req-info" ng-show="form.$submitted && form.dateTime.$error.required">Kies een datum en tijd!</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <ul class="btn-list">
+                    <input type="submit" value="Maak uw afspraak" />
+                </ul>
+                
+            </div>
+        </form>
+    </div>
+</div>
+
+<div ui-view="footer"></div>

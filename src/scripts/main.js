@@ -26,6 +26,21 @@ gpApp.config(['$stateProvider', "$urlRouterProvider", "$httpProvider", function(
                 }
             }
         })
+        .state('test', {
+            url: '/test',
+            views: {
+                'header@test': {
+                    templateUrl: 'template/header.html'
+                },
+                '@': {
+                    templateUrl: 'template/pages/appointmentForm.html',
+                    controller: 'agendaController'
+                },
+                'footer@test': {
+                    templateUrl: 'template/footer.html'
+                }
+            }
+        })
         .state('settings', {
                 url: '/settings',
                 views: {
@@ -71,6 +86,7 @@ gpApp.config(['$stateProvider', "$urlRouterProvider", "$httpProvider", function(
                 }
             }
         })
+
         .state('notfound', {
             url: '/notfound', 
             templateUrl: 'template/pages/fallback.html'

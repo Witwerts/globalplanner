@@ -31,15 +31,16 @@
                 });
         }
 
-        function getData(url, callback, useHeaders) {
+        function getData(url, data, callback, useHeaders) {
             if(useHeaders && !setHeader())
                 return null;
             
+            
             $http.get(url)
                 .then(function successCallback(response) {
-                    console.log(response.data);
+                    callback(response.data);
                 }, function errorCallback(response) {
-                    console.log(response);
+                    callback(response.data);
                 });
         }
     }
