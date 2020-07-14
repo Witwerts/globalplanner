@@ -168,6 +168,8 @@ class Auth_Model extends Endpoint{
                         )
                     );
                     $this->output['data']['jwt'] = JWT::encode($info,JWT_SECRET_TOKEN);
+                    $this->output['data']['user_id'] = $user['user_id'];
+                    $this->output['data']['type'] = $user['type'];
                     $this->output['data']['expires_at'] = $this->formatEndpointTime(time() + JWT_USABLE_TIME_SECONDS);
                 }
             }
